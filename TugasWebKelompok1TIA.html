@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIDEO - Sistem Informasi Demo Online Konoha</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b3d 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 50%),
+                        radial-gradient(circle, rgba(78,205,196,0.1) 0%, transparent 50%),
+                        radial-gradient(circle, rgba(255,193,7,0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #ffe66d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.8)); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(78, 205, 196, 0.2) 100%);
+            padding: 80px 60px;
+            border-radius: 30px;
+            margin-bottom: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '🍃';
+            position: absolute;
+            font-size: 300px;
+            opacity: 0.05;
+            top: -50px;
+            right: -50px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            background: linear-gradient(135deg, #fff, #4ecdc4, #ffe66d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            text-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            color: #b0b0b0;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+            padding: 40px;
+            border-radius: 25px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(78, 205, 196, 0.4);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card p {
+            color: #b0b0b0;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section Styles */
+        .section {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.6) 0%, rgba(45, 27, 61, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .section h2 {
+            font-size: 42px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ffe66d, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #ffe66d);
+            border-radius: 2px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            color: #4ecdc4;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            color: #e0e0e0;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+            background: rgba(26, 31, 58, 0.95);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.4s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(78, 205, 196, 0.6);
+        }
+
+        /* Aspirasi Items */
+        .aspirasi-list {
+            margin-top: 30px;
+        }
+
+        .aspirasi-item {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4ecdc4;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .aspirasi-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(78, 205, 196, 0.3);
+        }
+
+        .aspirasi-item h4 {
+            color: #ffe66d;
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        .aspirasi-item .meta {
+            font-size: 13px;
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .aspirasi-item .meta span {
+            background: rgba(78, 205, 196, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+
+        /* Polling Cards */
+        .polling-card {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.8), rgba(45, 27, 61, 0.8));
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .polling-card h4 {
+            color: #ffe66d;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .poll-option {
+            background: rgba(26, 31, 58, 0.6);
+            padding: 18px 25px;
+            margin-bottom: 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poll-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2));
+            transition: width 0.3s;
+            z-index: 0;
+        }
+
+        .poll-option:hover::before {
+            width: 100%;
+        }
+
+        .poll-option:hover {
+            border-color: #4ecdc4;
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .poll-option > div {
+            position: relative;
+            z-index: 1;
+        }
+
+        .poll-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 5px;
+            margin-top: 8px;
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(78, 205, 196, 0.15));
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.4);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffe66d, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #4ecdc4;
+            margin-top: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 14px 28px;
+            background: rgba(26, 31, 58, 0.6);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 25px;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .tab:hover {
+            transform: translateY(-3px);
+            border-color: #4ecdc4;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(10, 14, 39, 0.95);
+            padding: 40px 0;
+            margin-top: 80px;
+            text-align: center;
+            color: #b0b0b0;
+            border-top: 2px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        /* Alert */
+        .alert {
+            background: linear-gradient(135deg, #ff6b6b, #ff8787);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 42px;
+            }
+            
+            .container {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">🍃 SIDEO</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showSection('home')">Beranda</a></li>
+                <li><a href="#" onclick="showSection('aspirasi')">Aspirasi</a></li>
+                <li><a href="#" onclick="showSection('polling')">Polling</a></li>
+                <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
+                <li><a href="#" onclick="showSection('about')">Tentang</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="alert" class="alert"></div>
+
+        <!-- HOME SECTION -->
+        <div id="home" class="page-section">
+            <div class="hero">
+                <h1>🍃 SIDEO KONOHA</h1>
+                <p>Platform Digital Revolusioner untuk Menyalurkan Aspirasi Tanpa Kerusuhan. Suarakan pendapat Anda dengan aman, transparan, dan efektif untuk Konoha yang lebih baik!</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>📢 Forum Aspirasi Publik</h3>
+                    <p>Sampaikan keluhan, saran, dan aspirasi langsung kepada pemerintah Konoha dengan mudah dan cepat.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🗳️ Polling Real-Time</h3>
+                    <p>Ikuti voting kebijakan pemerintah dan lihat hasil secara langsung dengan visualisasi menarik.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Dashboard Analitik</h3>
+                    <p>Pantau tren aspirasi, isu terpopuler, dan statistik partisipasi masyarakat secara real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 Keamanan Terjamin</h3>
+                    <p>Sistem enkripsi tingkat tinggi untuk melindungi data dan mencegah manipulasi informasi.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Mengapa SIDEO?</h2>
+                <p style="line-height: 2; font-size: 18px; margin-bottom: 20px;">
+                    Dalam era digital ini, demonstrasi fisik bukan lagi satu-satunya cara menyampaikan aspirasi. SIDEO hadir sebagai solusi modern yang memungkinkan warga Konoha berpartisipasi dalam kebijakan negara tanpa harus turun ke jalan.
+                </p>
+                <p style="line-height: 2; font-size: 18px;">
+                    Terinspirasi dari kesuksesan platform digital di Indonesia, SIDEO dirancang untuk menjaga stabilitas sosial sambil tetap memberikan ruang bagi suara rakyat. Tidak ada lagi kerusuhan, yang ada adalah dialog konstruktif!
+                </p>
+            </div>
+        </div>
+
+        <!-- ASPIRASI SECTION -->
+        <div id="aspirasi" class="page-section" style="display: none;">
+            <div class="section">
+                <h2>✍️ Sampaikan Aspirasi Anda</h2>
+                <form id="aspirasiForm">
+                    <div class="form-group">
+                        <label>Nama Lengkap:</label>
+                        <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Wilayah:</label>
+                        <select id="wilayah" required>
+                            <option value="">Pilih Wilayah</option>
+                            <option value="Pusat Konoha">Pusat Konoha</option>
+                            <option value="Distrik Utara">Distrik Utara</option>
+                            <option value="Distrik Selatan">Distrik Selatan</option>
+                            <option value="Distrik Timur">Distrik Timur</option>
+                            <option value="Distrik Barat">Distrik Barat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori:</label>
+                        <select id="kategori" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Infrastruktur">Infrastruktur</option>
+                            <option value="Pendidikan">Pendidikan</option>
+                            <option value="Kesehatan">Kesehatan</option>
+                            <option value="Keamanan">Keamanan</option>
+                            <option value="Ekonomi">Ekonomi</option>
+                            <option value="Lingkungan">Lingkungan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Judul Aspirasi:</label>
+                        <input type="text" id="judul" placeholder="Berikan judul yang jelas dan singkat" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Deskripsi:</label>
+                        <textarea id="deskripsi" placeholder="Jelaskan aspirasi Anda secara detail..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn">🚀 Kirim Aspirasi</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>📋 Aspirasi Warga Konoha</h2>
+                <div class="tabs">
+                    <button class="tab active" onclick="filterAspirasi('semua')">Semua</button>
+                    <button class="tab" onclick="filterAspirasi('Infrastruktur')">Infrastruktur</button>
+                    <button class="tab" onclick="filterAspirasi('Pendidikan')">Pendidikan</button>
+                    <button class="tab" onclick="filterAspirasi('Kesehatan')">Kesehatan</button>
+                    <button class="tab" onclick="filterAspirasi('Keamanan')">Keamanan</button>
+                    <button class="tab" onclick="filterAspirasi('Ekonomi')">Ekonomi</button>
+                </div>
+                <div class="aspirasi-list" id="aspirasiList"></div>
+            </div>
+        </div>
+
+        <!-- POLLING SECTION -->
+        <div id="polling" class="page-section" style="display: none;">
+            <div class="section">
+                <h2>🗳️ Polling & Voting Aktif</h2>
+                <p style="margin-bottom: 40px; font-size: 18px;">Partisipasi Anda sangat berarti untuk masa depan Konoha!</p>
+                <div id="pollingList"></div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard" class="page-section" style="display: none;">
+            <div class="section">
+                <h2>📊 Dashboard Analitik</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAspirasi">0</div>
+                        <div class="stat-label">Total Aspirasi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalPolling">3</div>
+                        <div class="stat-label">Polling Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUser">1,247</div>
+                        <div class="stat-label">Pengguna Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="responRate">87%</div>
+                        <div class="stat-label">Tingkat Partisipasi</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🔥 Isu Terpopuler</h2>
+                <div id="topIssues"></div>
+            </div>
+        </div>
+
+        <!-- ABOUT SECTION -->
+        <div id="about" class="page-section" style="display: none;">
+            <div class="section">
+                <h2>ℹ️ Tentang SIDEO</h2>
+                <p style="line-height: 2; font-size: 18px; margin-bottom: 30px;">
+                    SIDEO (Sistem Informasi Demo Online) adalah inovasi digital yang dirancang khusus untuk menjaga stabilitas Negara Konoha dengan menyediakan platform aspirasi yang aman, transparan, dan efektif.
+                </p>
+                
+                <h3 style="color: #ffe66d; margin-top: 40px; margin-bottom: 20px; font-size: 28px;">🎯 Misi Kami:</h3>
+                <ul style="line-height: 2.2; font-size: 17px; margin-left: 30px; color: #b0b0b0;">
+                    <li>Mengurangi potensi konflik fisik dan kerusuhan</li>
+                    <li>Meningkatkan transparansi dalam pengambilan kebijakan</li>
+                    <li>Mempercepat respon pemerintah terhadap aspirasi warga</li>
+                    <li>Memberikan sistem peringatan dini untuk antisipasi demo fisik</li>
+                    <li>Membangun komunikasi dua arah yang konstruktif</li>
+                </ul>
+
+                <h3 style="color: #ffe66d; margin-top: 40px; margin-bottom: 20px; font-size: 28px;">👥 Target Pengguna:</h3>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🏛️ Pemerintah</h3>
+                        <p>Hok
